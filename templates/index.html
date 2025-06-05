@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Language Interpreter</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .icon-circle {
+      width: 120px;
+      height: 120px;
+      background-color: #ddd;
+      border: 2px solid black;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 60px;
+    }
+
+    .btn {
+      background-color: #ddd;
+      border: 2px solid black;
+      border-radius: 10px;
+      padding: 12px 24px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn:hover {
+      background-color: #ccc;
+    }
+
+    /* Bottom Navigation */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #046B99;
+    border-top: 1px solid #E0E0E0;
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    z-index: 100;
+  }
+  
+  .bottom-nav img {
+    width: 28px;
+  }
+  </style>
+
+  <!-- Font Awesome for icons -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div class="container">
+  <div class="icon-circle"><i class="fas fa-hand-paper"></i></div>
+  <button class="btn">
+  <a href="/asl" style="text-decoration: none; color: inherit;">Start signing</a>
+</button>
+
+  <div class="icon-circle"><i class="fas fa-microphone"></i></div>
+  <button class="btn">Start Listening</button>
+</div>
+<nav class="bottom-nav">
+  <a href="#"><img src="{{ url_for('static', filename='Settings.svg') }}"alt="Home" /></a>
+   <a href="#"><img src="{{ url_for('static', filename='home.svg') }}"alt="Home" /></a>
+    <a href="#"><img src="{{ url_for('static', filename='accessibilty.svg') }}"alt="accessibility" /></a>
+   <a href="#"><img src="{{ url_for('static', filename='chat.svg') }}"alt="=ai chat buddy" /></a>
+
+  </nav>
+</body>
+</html>
