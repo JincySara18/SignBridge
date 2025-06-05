@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ASL AR Overlay</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #f8f8f8;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #video-container {
+      margin-top: 10px;
+      position: relative;
+      width: 640px;
+      height: 480px;
+    }
+
+    video, canvas {
+      width: 100%;
+      height: 100%;
+      border: 2px solid #333;
+      border-radius: 8px;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #046B99;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+    }
+
+    .bottom-nav img {
+      width: 24px;
+    }
+  </style>
+</head>
+<body>
+  <h3 style="margin-top: 5px;">🧠 ASL Interpreter with AR Overlay</h3>
+
+  <div id="video-container">
+    <video id="webcam" autoplay playsinline muted></video>
+    <canvas id="overlay"></canvas>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="#"><img src="{{ url_for('static', filename='Settings.svg') }}" alt="Settings" /></a>
+    <a href="#"><img src="{{ url_for('static', filename='home.svg') }}" alt="Home" /></a>
+    <a href="#"><img src="{{ url_for('static', filename='accessibilty.svg') }}" alt="Accessibility" /></a>
+  </nav>
+
+  <!-- MediaPipe scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+  <script>
+    const videoElement = document.getElementById("webcam");
+    const canvasElement = document.getElementById("overlay");
+    const canvasCtx = canvasElement.getContext("2d");
+    let currentPrediction = "--";
+
+    const hands = new Hands({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`,
+    });
+
+    hands.setOptions({
+      maxNumHands: 1,
+      modelComplexity: 1,
+      minDetectionConfidence: 0.7,
+      minTrackingConfidence: 0.7,
+    });
+
+    hands.onResults(async (results) => {
+      canvasCtx.save();
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        const landmarks = results.multiHandLandmarks[0];
+        drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, { color: "#00FF00", lineWidth: 2 });
+        drawLandmarks(canvasCtx, landmarks, { color: "#FF0000", radius: 3 });
+
+        const [x, y] = [landmarks[0].x * canvasElement.width, landmarks[0].y * canvasElement.height];
+        canvasCtx.font = "20px Arial";
+        canvasCtx.fillStyle = "blue";
+        canvasCtx.fillText(currentPrediction, x + 10, y - 10);
+      }
+
+      canvasCtx.restore();
+    });
+
+    async function startCamera() {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoElement.srcObject = stream;
+      videoElement.onloadedmetadata = () => {
+        videoElement.play();
+        canvasElement.width = videoElement.videoWidth;
+        canvasElement.height = videoElement.videoHeight;
+
+        const camera = new Camera(videoElement, {
+          onFrame: async () => {
+            await hands.send({ image: videoElement });
+          },
+          width: 640,
+          height: 480,
+        });
+
+        camera.start();
+      };
+    }
+
+    startCamera();
+
+    async function predictSign() {
+      const canvas = document.createElement("canvas");
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+      const imageData = canvas.toDataURL("image/jpeg");
+
+      const res = await fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: imageData }),
+      });
+
+      const data = await res.json();
+      currentPrediction = data.prediction || "--";
+    }
+
+    setInterval(predictSign, 3000);
+  </script>
+</body>
+</html>
