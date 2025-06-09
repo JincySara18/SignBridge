@@ -5,6 +5,10 @@ import cv2
 import mediapipe as mp
 import joblib
 import os
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
 
 app = Flask(__name__)
 
@@ -27,6 +31,7 @@ def asl():
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
+        logging.info("Entered prediction route")
         data = request.get_json()
         image_data = data["image"].split(",")[1]
         decoded = base64.b64decode(image_data)
@@ -67,6 +72,7 @@ def predict():
         })
 
     except Exception as e:
+        logging.error("Something went wrong")
         return jsonify({"error": str(e)})
 
 if __name__ == "__main__":
