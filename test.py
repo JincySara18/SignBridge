@@ -47,7 +47,7 @@ def predict():
         results = hands_detector.process(img_rgb)
 
         if not results.multi_hand_landmarks:
-            logging.info("prediction": "No hand detected");
+            logging.info("No hand detected");
             return jsonify({"prediction": "No hand detected", "confidence": 0})
 
         # === Extract landmarks ===
