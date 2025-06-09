@@ -65,8 +65,8 @@ def predict():
         distances, _ = model.kneighbors(X)
         confidence = float(1 - distances[0][0])  # closer = higher confidence
 
-       logging.info("Predicted class: {pred_class}")
-       logging.info("Confidence: {confidence:.4f}")
+        logging.info("Predicted class: {pred_class}")
+        logging.info("Confidence: {confidence:.4f}")
 
         return jsonify({
             "prediction": pred_class,
