@@ -39,6 +39,7 @@ def predict():
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
         if img is None or img.shape[0] == 0 or img.shape[1] == 0:
+            logging.info("Received empty or invalid image.");
             return jsonify({"error": "Received empty or invalid image."})
 
         # === Convert to RGB and use MediaPipe to detect hand ===
@@ -46,6 +47,7 @@ def predict():
         results = hands_detector.process(img_rgb)
 
         if not results.multi_hand_landmarks:
+            logging.info("prediction": "No hand detected");
             return jsonify({"prediction": "No hand detected", "confidence": 0})
 
         # === Extract landmarks ===
@@ -63,8 +65,8 @@ def predict():
         distances, _ = model.kneighbors(X)
         confidence = float(1 - distances[0][0])  # closer = higher confidence
 
-        print(f"Predicted class: {pred_class}")
-        print(f"Confidence: {confidence:.4f}")
+       logging.info(f"Predicted class: {pred_class}")
+        logging.info(f"Confidence: {confidence:.4f}")
 
         return jsonify({
             "prediction": pred_class,
