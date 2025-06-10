@@ -18,7 +18,7 @@ label_encoder = joblib.load("label_encoder.pkl")
 
 # === MediaPipe setup ===
 mp_hands = mp.solutions.hands
-hands_detector = mp_hands.Hands(static_image_mode=True, max_num_hands=1)
+hands_detector = mp_hands.Hands(static_image_mode=False, max_num_hands=1)
 
 @app.route("/")
 def index():
