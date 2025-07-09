@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Speech to Text</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 100vh;
+      background-color: white;
+    }
+
+    .bubble {
+      margin-top: 20px;
+      background-color: #b3ecff;
+      padding: 30px 20px;
+      border-radius: 24px;
+      border: 2px solid black;
+      width: 80%;
+      max-width: 400px;
+      min-height: 200px;
+      font-size: 24px;
+      font-weight: normal;
+      line-height: 1.5;
+      color: black;
+      position: relative;
+    }
+
+    .mic-button {
+      margin: 20px 0;
+      width: 120px;
+      height: 120px;
+      background-color: #b3ecff;
+      border-radius: 50%;
+      border: 2px solid black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .mic-button:hover {
+      background-color: #a0def5;
+    }
+
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background-color: #046B99;
+      padding: 10px 0;
+      width: 100%;
+    }
+
+    .bottom-nav .nav-item {
+      text-align: center;
+      flex: 1;
+    }
+
+    .bottom-nav .nav-item span {
+      display: block;
+      color: white;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+
+    .bottom-nav .nav-icon {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    .active {
+      background-color: #b3ecff;
+      border-radius: 12px;
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bubble" id="transcription">
+    Tap the mic and start speaking...
+  </div>
+
+  <div class="mic-button" id="micBtn">🎤</div>
+
+  <nav class="bottom-nav">
+  <div class="nav-item nav-settings">
+    <a href="#"><img src="{{ url_for('static', filename='Settings.svg') }}" alt="Settings" /></a>
+  </div>
+  <div class="nav-item nav-home">
+  <!-- given / since in the flask api the / is the route for index.html-->
+    <a href="/"><img src="{{ url_for('static', filename='home.svg') }}" alt="Home" /></a>
+  </div>
+  <div class="nav-item nav-accessibility">
+    <a href="#"><img src="{{ url_for('static', filename='accessibilty.svg') }}" alt="Accessibility" /></a>
+  </div>
+</nav>
+
+
+  <script>
+    const micBtn = document.getElementById("micBtn");
+    const transcription = document.getElementById("transcription");
+
+    let recognition;
+    let listening = false;
+
+    if ('webkitSpeechRecognition' in window) {
+      recognition = new webkitSpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = function(event) {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        transcription.textContent = transcript;
+      };
+
+      recognition.onerror = function(event) {
+        console.error("Speech recognition error:", event.error);
+      };
+
+    } else {
+      alert("Speech Recognition is not supported in this browser.");
+    }
+
+    micBtn.addEventListener("click", () => {
+      if (!recognition) return;
+
+      if (!listening) {
+        recognition.start();
+        micBtn.style.backgroundColor = "#66ccff";
+        listening = true;
+      } else {
+        recognition.stop();
+        micBtn.style.backgroundColor = "#b3ecff";
+        listening = false;
+      }
+    });
+  </script>
+</body>
+</html>
