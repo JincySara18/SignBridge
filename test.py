@@ -11,11 +11,11 @@ import joblib
 
 app = Flask(__name__)
 
-# === Load label encoder and scaler ===
+#  Load label encoder and scaler 
 label_encoder = joblib.load("mlp_label_encoder.pkl")
 scaler = joblib.load("mlp_scaler.pkl")
 
-# === Define the same model class from training ===
+#  Define the same model class from training 
 class MLP(nn.Module):
     def __init__(self, input_size, num_classes):
         super(MLP, self).__init__()
@@ -31,7 +31,7 @@ class MLP(nn.Module):
     def forward(self, x):
         return self.model(x)
 
-# === Load trained model ===
+#  Load trained model 
 model = MLP(input_size=63, num_classes=len(label_encoder.classes_))
 model.load_state_dict(torch.load("gesture_mlp_model.pth", map_location=torch.device("cpu")))
 model.eval()
@@ -40,18 +40,22 @@ model.eval()
 mp_hands = mp.solutions.hands
 hands_detector = mp_hands.Hands(static_image_mode=True, max_num_hands=1)
 
+# routing added for index.html
 @app.route("/")
 def index():
     return render_template("index.html")
 
+# routing added for asl.html
 @app.route("/asl")
 def asl():
     return render_template("asl.html")
 
+# routing added for audio.html
 @app.route("/audio")
 def audio():
     return render_template("audio.html")
 
+# added for prediction
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
