@@ -1,3 +1,4 @@
+# added by Jincy on June-2nd-2025
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
@@ -27,11 +28,11 @@ X_scaled = scaler.fit_transform(X)
 joblib.dump(label_encoder, "mlp_label_encoder.pkl")
 joblib.dump(scaler, "mlp_scaler.pkl")
 
-# === Split data ===
+#  Split data into training and testing 
 X_train, X_test, y_train, y_test = train_test_split(
     X_scaled, y_encoded, test_size=0.2, random_state=42)
 
-# === Convert to tensors ===
+#  Convert to tensors 
 X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
 X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
 y_train_tensor = torch.tensor(y_train, dtype=torch.long)
