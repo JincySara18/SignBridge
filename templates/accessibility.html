@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accessibility Options</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background-color: #011a17;
+      font-family: Arial, sans-serif;
+      color: white;
+      padding: 16px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background-color: #83d8cd;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .card h2 {
+      color: black;
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .text-sizes {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      background-color: #056d94;
+      border-radius: 16px;
+      padding: 10px;
+      margin: 12px 0;
+    }
+
+    .text-size {
+      color: white;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background-color: transparent;
+      cursor: pointer;
+    }
+
+    .text-size.active {
+      background-color: white;
+      color: black;
+      font-weight: bold;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 16px;
+    }
+
+    .col {
+      flex: 1;
+      text-align: center;
+    }
+
+    .color-box {
+      width: 60px;
+      height: 40px;
+      margin: 0 auto;
+      border-radius: 8px;
+      border: 2px solid black;
+    }
+
+    .speech-buttons {
+      display: flex;
+      justify-content: center;
+      background-color: #056d94;
+      padding: 8px;
+      border-radius: 20px;
+      margin-top: 16px;
+    }
+
+    .speech-btn {
+      background: none;
+      border: none;
+      font-weight: bold;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 12px;
+    }
+
+    .speech-btn.active {
+      background-color: white;
+      color: black;
+    }
+
+    .reset-btn {
+      background-color: #83d8cd;
+      border: 2px solid #009999;
+      border-radius: 14px;
+      padding: 14px 24px;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 0 auto;
+      display: block;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    nav.bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #056d94;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 0;
+      border-top: 2px solid #004d47;
+      z-index: 1000;
+    }
+
+    .nav-item {
+      padding: 8px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .nav-item img {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 4px;
+      pointer-events: none;
+    }
+
+    .nav-item.active {
+      background-color: #b3f1f1;
+      border: 2px solid black;
+      color: black;
+    }
+
+    .nav-item.active img {
+      filter: brightness(0) saturate(100%);
+    }
+  </style>
+</head>
+<body>
+  <h1>Accessibility options</h1>
+
+  <div class="card">
+    <h2>Caption Style</h2>
+    <p>Text Size</p>
+    <div class="text-sizes">
+      <div class="text-size" style="font-size: 10px">Aa</div>
+      <div class="text-size" style="font-size: 12px">Aa</div>
+      <div class="text-size active" style="font-size: 14px">Aa</div>
+      <div class="text-size" style="font-size: 16px">Aa</div>
+      <div class="text-size" style="font-size: 18px">Aa</div>
+      <div class="text-size" style="font-size: 20px">Aa</div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <p>Text Color</p>
+        <input type="color" id="textColorPicker" value="#000000" />
+      </div>
+      <div class="col">
+        <p>Background Color</p>
+        <input type="color" id="bgColorPicker" value="#000000" />
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Speech Output</h2>
+    <div class="speech-buttons">
+      <button class="speech-btn active" id="maleBtn">Male</button>
+      <button class="speech-btn" id="femaleBtn">Female</button>
+    </div>
+  </div>
+
+  <button class="reset-btn">Reset to defaults</button>
+
+  <nav class="bottom-nav">
+    <a href="#" class="nav-item">
+      <img src="{{ url_for('static', filename='accessibilty.svg') }}" alt="Guide" />
+      Guide
+    </a>
+    <a href="/userselect" class="nav-item">
+      <img src="{{ url_for('static', filename='home.svg') }}" alt="Home" />
+      Home
+    </a>
+    <a href="#" class="nav-item active">
+      <img src="{{ url_for('static', filename='accessibilty.svg') }}" alt="Accessibility" />
+      Accessibility
+    </a>
+  </nav>
+
+  <script>
+    document.querySelectorAll('.text-size').forEach(button => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.text-size').forEach(b => b.classList.remove('active'));
+        button.classList.add('active');
+        document.body.style.fontSize = button.style.fontSize;
+      });
+    });
+
+    const textColorPicker = document.getElementById("textColorPicker");
+    const bgColorPicker = document.getElementById("bgColorPicker");
+
+    textColorPicker.addEventListener("input", e => {
+      document.body.style.color = e.target.value;
+    });
+
+    bgColorPicker.addEventListener("input", e => {
+      document.body.style.backgroundColor = e.target.value;
+    });
+
+    const maleBtn = document.getElementById("maleBtn");
+    const femaleBtn = document.getElementById("femaleBtn");
+
+    maleBtn.addEventListener("click", () => {
+      maleBtn.classList.add("active");
+      femaleBtn.classList.remove("active");
+    });
+
+    femaleBtn.addEventListener("click", () => {
+      femaleBtn.classList.add("active");
+      maleBtn.classList.remove("active");
+    });
+
+    document.querySelector(".reset-btn").addEventListener("click", () => {
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>
