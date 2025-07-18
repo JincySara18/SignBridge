@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SignBridge - Walkthrough</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #011a17;
+      overflow: hidden;
+    }
+
+    .carousel-container {
+      display: flex;
+      width: 200vw;
+      height: 100vh;
+      transition: transform 0.6s ease-in-out;
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .dots {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      z-index: 10;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin: 0 6px;
+      background-color: #ccc;
+      border-radius: 50%;
+      transition: background-color 0.3s;
+    }
+
+    .dot.active {
+      background-color: #33d9c1;
+    }
+  </style>
+</head>
+<body>
+
+<div class="carousel-container" id="carousel">
+  <div class="slide">
+    <img src="{{ url_for('static', filename='Rectangle.png') }}" alt="Slide 1">
+  </div>
+  <div class="slide">
+    <img src="{{ url_for('static', filename='Rectangle2.png') }}" alt="Slide 2">
+  </div>
+</div>
+
+<div class="dots">
+  <span class="dot active"></span>
+  <span class="dot"></span>
+</div>
+
+<script>
+  let currentSlide = 0;
+  const carousel = document.getElementById("carousel");
+  const dots = document.querySelectorAll(".dot");
+
+  function goToNextSlide() {
+    if (currentSlide < 1) {
+      currentSlide++;
+      carousel.style.transform = `translateX(-${currentSlide * 100}vw)`;
+      updateDots();
+    } else {
+      // After last slide, go to user selection
+      window.location.href = "/userselect";
+    }
+  }
+
+  function updateDots() {
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === currentSlide);
+    });
+  }
+
+  setInterval(goToNextSlide, 2500);
+</script>
+
+</body>
+</html>

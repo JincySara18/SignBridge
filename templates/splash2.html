@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SignBridge - Splash 2</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #011a17;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <img src="{{ url_for('static', filename='Splash 1.png') }}" alt="Splash 2">
+  <script>
+    setTimeout(() => {
+      window.location.href = "/splash3";
+    }, 2000);
+  </script>
+</body>
+</html>
