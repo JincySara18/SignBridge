@@ -188,9 +188,9 @@
     const predictionBox = document.getElementById("prediction");
     const toggleCameraBtn = document.getElementById("toggleCameraBtn");
 
-    let currentFacingMode = "environment"; // Start with back camera
-    let currentPrediction = "No hand detected";
+    let currentFacingMode = "environment"; // back cam default
     let currentStream = null;
+    let currentPrediction = "No hand detected";
     let camera = null;
 
     const hands = new Hands({
@@ -248,7 +248,7 @@
       try {
         const constraints = {
           video: {
-            facingMode: { ideal: facingMode },
+            facingMode: { exact: facingMode },
             width: { ideal: 640 },
             height: { ideal: 480 }
           },
@@ -276,7 +276,7 @@
         };
       } catch (err) {
         console.error("Camera error:", err);
-        alert("Could not access the camera.");
+        alert("⚠️ Unable to access the " + facingMode + " camera. Try switching or check permissions.");
       }
     }
 
