@@ -33,6 +33,17 @@
       margin-bottom: 12px;
     }
 
+    #toggleCameraBtn {
+      background-color: #044d47;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
     #video-wrapper {
       border: 4px solid #1cc9aa;
       border-radius: 20px;
@@ -138,6 +149,7 @@
 <body>
   <div class="container">
     <button class="back-btn" onclick="history.back()">←</button>
+    <button id="toggleCameraBtn">🔁 Switch Camera</button>
 
     <div id="video-wrapper">
       <video id="webcam" autoplay playsinline muted></video>
@@ -165,7 +177,6 @@
     </a>
   </nav>
 
-  <!-- MediaPipe + Webcam -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
@@ -174,7 +185,13 @@
     const videoElement = document.getElementById("webcam");
     const canvasElement = document.getElementById("overlay");
     const canvasCtx = canvasElement.getContext("2d");
+    const predictionBox = document.getElementById("prediction");
+    const toggleCameraBtn = document.getElementById("toggleCameraBtn");
+
+    let currentFacingMode = "environment"; // Start with back camera
     let currentPrediction = "No hand detected";
+    let currentStream = null;
+    let camera = null;
 
     const hands = new Hands({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
@@ -203,7 +220,7 @@
 
         predictSign(rawLandmarks);
       } else {
-        document.getElementById("prediction").textContent = "No hand detected";
+        predictionBox.textContent = "No hand detected";
       }
 
       canvasCtx.restore();
@@ -211,11 +228,7 @@
 
     async function predictSign(landmarks) {
       const base = landmarks[0];
-      const normalized = landmarks.flatMap((lm) => [
-        lm.x - base.x,
-        lm.y - base.y,
-        lm.z - base.z
-      ]);
+      const normalized = landmarks.flatMap((lm) => [lm.x - base.x, lm.y - base.y, lm.z - base.z]);
       const res = await fetch("/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -224,31 +237,57 @@
 
       const data = await res.json();
       currentPrediction = data.prediction || "No hand detected";
-      document.getElementById("prediction").textContent = currentPrediction;
+      predictionBox.textContent = currentPrediction;
     }
 
-    async function startCamera() {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      videoElement.srcObject = stream;
+    async function startCamera(facingMode = "environment") {
+      if (currentStream) {
+        currentStream.getTracks().forEach((track) => track.stop());
+      }
 
-      videoElement.onloadedmetadata = () => {
-        videoElement.play();
-        canvasElement.width = videoElement.videoWidth;
-        canvasElement.height = videoElement.videoHeight;
-
-        const camera = new Camera(videoElement, {
-          onFrame: async () => {
-            await hands.send({ image: videoElement });
+      try {
+        const constraints = {
+          video: {
+            facingMode: { ideal: facingMode },
+            width: { ideal: 640 },
+            height: { ideal: 480 }
           },
-          width: videoElement.videoWidth,
-          height: videoElement.videoHeight,
-        });
+          audio: false
+        };
 
-        camera.start();
-      };
+        currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+        videoElement.srcObject = currentStream;
+
+        videoElement.onloadedmetadata = () => {
+          videoElement.play();
+          canvasElement.width = videoElement.videoWidth;
+          canvasElement.height = videoElement.videoHeight;
+
+          if (camera) camera.stop();
+          camera = new Camera(videoElement, {
+            onFrame: async () => {
+              await hands.send({ image: videoElement });
+            },
+            width: videoElement.videoWidth,
+            height: videoElement.videoHeight,
+          });
+
+          camera.start();
+        };
+      } catch (err) {
+        console.error("Camera error:", err);
+        alert("Could not access the camera.");
+      }
     }
 
-    startCamera();
+    toggleCameraBtn.addEventListener("click", () => {
+      currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
+      startCamera(currentFacingMode);
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      startCamera(currentFacingMode);
+    });
 
     function speakPrediction() {
       if (!currentPrediction || currentPrediction === "No hand detected") return;
