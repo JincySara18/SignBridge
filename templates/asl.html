@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SignBridge - ASL (Debug Mode)</title>
+  <title>SignBridge - ASL (Fixed Camera)</title>
   <style>
-    /* Existing styles omitted for brevity... */
+    /* Your original styles + log box styling */
     #logBox {
       background: #fff;
       color: #000;
@@ -38,18 +38,16 @@
       </button>
     </div>
 
-    <!-- 🔍 Debug Log Box -->
+    <!-- 📋 In-page log output -->
     <pre id="logBox">[LOGS]\n</pre>
   </div>
 
-  <!-- bottom nav... -->
-
+  <!-- MediaPipe & camera scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
 
   <script>
-    // 🧠 In-browser + console logger
     function mobileLog(msg) {
       const logBox = document.getElementById("logBox");
       logBox.textContent += msg + "\n";
@@ -119,13 +117,13 @@
         await navigator.mediaDevices.getUserMedia({ video: true });
         mobileLog("✅ Camera permission granted");
       } catch (e) {
-        mobileLog("❌ Camera access blocked or not yet granted");
+        mobileLog("❌ Camera permission denied or not granted");
       }
 
       const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(device => device.kind === 'videoinput');
-      videoDevices.forEach((device, index) => {
-        mobileLog(`🎥 Camera ${index}: ${device.label || "No label"} (${device.deviceId})`);
+      const videoDevices = devices.filter(d => d.kind === 'videoinput');
+      videoDevices.forEach((device, i) => {
+        mobileLog(`🎥 Camera ${i}: ${device.label} (${device.deviceId})`);
       });
       return videoDevices;
     }
@@ -138,13 +136,17 @@
         return;
       }
 
-      const backCamera = videoDevices.find(device =>
+      // 🔧 Pick LAST back camera (most likely the real rear one)
+      const backCameras = videoDevices.filter(device =>
         device.label.toLowerCase().includes("back") || device.label.toLowerCase().includes("environment"));
       const frontCamera = videoDevices.find(device =>
         device.label.toLowerCase().includes("front") || device.label.toLowerCase().includes("user"));
 
-      const selectedDevice = useBackCamera && backCamera ? backCamera : frontCamera || videoDevices[0];
-      mobileLog(`📸 Using: ${selectedDevice.label || "Unnamed Camera"}`);
+      const selectedDevice = useBackCamera && backCameras.length > 0
+        ? backCameras[backCameras.length - 1]  // 🟢 Use last back-facing camera
+        : frontCamera || videoDevices[0];
+
+      mobileLog(`📸 Using: ${selectedDevice.label}`);
 
       if (currentStream) {
         currentStream.getTracks().forEach(track => track.stop());
@@ -180,14 +182,14 @@
           camera.start();
         };
       } catch (err) {
-        mobileLog("❌ Failed to start camera: " + err.message);
+        mobileLog("❌ Camera error: " + err.message);
         alert("Unable to access camera: " + err.message);
       }
     }
 
     toggleCameraBtn.addEventListener("click", () => {
       useBackCamera = !useBackCamera;
-      mobileLog(`🔄 Switching to ${useBackCamera ? "Back" : "Front"} Camera`);
+      mobileLog(`🔄 Switched to ${useBackCamera ? "Back" : "Front"} Camera`);
       startCamera();
     });
 
@@ -202,7 +204,7 @@
       const utterance = new SpeechSynthesisUtterance(currentPrediction);
       utterance.lang = "en-US";
       utterance.onend = () => speakerIcon.src = "/static/speaker.svg";
-      utterance.onerror = (err) => mobileLog("❌ Speech error: " + err.message);
+      utterance.onerror = (err) => mobileLog("🔇 Speech error: " + err.message);
       speechSynthesis.cancel();
       speechSynthesis.speak(utterance);
     }
