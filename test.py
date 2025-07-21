@@ -50,6 +50,10 @@ def splash_carousel():
 def user_select():
     return render_template("userSelect.html")
 
+@app.route("/guide")
+def guide():
+    return render_template("guide.html")
+
 @app.route("/asl")
 def asl():
     return render_template("asl.html")
@@ -93,4 +97,4 @@ def predict():
         return jsonify({"error": str(e)})
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=10000)
+    app.run(debug=True)
