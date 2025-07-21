@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ASL Guide</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #00211d;
+      font-family: Arial, sans-serif;
+      color: #ffffff;
+    }
+
+    .guide-container {
+      padding: 20px;
+      padding-bottom: 100px; /* space for nav bar */
+      overflow-y: auto;
+      max-height: 100vh;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .sign-card {
+      margin-bottom: 24px;
+    }
+
+    .sign-card h3 {
+      margin: 0 0 6px 4px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .sign-card img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+      /*background-color: #6bc7b9;*/
+      padding: 16px;
+      border-radius: 10px;
+      display: block;
+    }
+
+    .navbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #013832;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 0;
+      border-top: 1px solid #004d44;
+    }
+
+    .nav-button {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+    }
+
+    .nav-button img {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 4px;
+    }
+
+    .nav-button.active {
+      background-color: #00a393;
+      border-radius: 10px;
+      padding: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="guide-container">
+    <h1>Get Started</h1>
+    <h2>Let's learn ASL!</h2>
+
+    <div class="sign-card">
+     
+      <img src="{{ url_for('static', filename='hello.svg') }}" alt="Hello sign" />
+    </div>
+    <div class="sign-card">
+      
+      <img src="{{ url_for('static', filename='yes.svg') }}" alt="Yes sign" />
+    </div>
+    <div class="sign-card">
+      
+      <img src="{{ url_for('static', filename='thankyou.svg') }}" alt="Thank you sign" />
+    </div>
+    <div class="sign-card">
+      
+      <img src="{{ url_for('static', filename='i.svg') }}" alt="I sign" />
+    </div>
+    <div class="sign-card">
+      
+      <img src="{{ url_for('static', filename='you.svg') }}" alt="You sign" />
+    </div>
+    <div class="sign-card">
+      
+      <img src="{{ url_for('static', filename='love.svg') }}" alt="Love sign" />
+    </div>
+  </div>
+
+  <div class="navbar">
+    <div class="nav-button active" onclick="location.href='/guide'">
+      <img src="{{ url_for('static', filename='accessibility.svg') }}" alt="Learn" />
+      <span>Learn</span>
+    </div>
+    <div class="nav-button" onclick="location.href='/userselect'">
+      <img src="{{ url_for('static', filename='home.svg') }}" alt="Home" />
+      <span>Home</span>
+    </div>
+    <div class="nav-button" onclick="location.href='/accessibility'">
+      <img src="{{ url_for('static', filename='accessibility.svg') }}" alt="Accessibility" />
+      <span>Accessibility</span>
+    </div>
+  </div>
+
+</body>
+</html>
