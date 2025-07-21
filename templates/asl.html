@@ -5,20 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SignBridge - ASL</title>
   <style>
-    body {
-      background-color: #011a17;
-      color: white;
-      font-family: sans-serif;
-    }
+    body { background-color: #011a17; color: white; font-family: sans-serif; }
     #video-wrapper { margin: 20px auto; max-width: 420px; aspect-ratio: 4/3; border: 4px solid #1cc9aa; border-radius: 20px; overflow: hidden; }
     video, canvas { width: 100%; height: 100%; object-fit: cover; }
     #prediction { background: #83d8cd; color: black; text-align: center; padding: 10px; margin: 10px auto; border-radius: 10px; max-width: 420px; }
     #logBox { background: #fff; color: #000; padding: 10px; font-size: 13px; border-radius: 8px; max-width: 420px; margin: 16px auto; white-space: pre-wrap; max-height: 160px; overflow-y: auto; }
     .speaker { display: flex; justify-content: center; margin: 20px; }
+    button { margin: 12px auto; display: block; padding: 8px 16px; font-size: 16px; border-radius: 6px; border: none; background: #83d8cd; color: black; }
   </style>
 </head>
 <body>
-  <button onclick="toggleCamera()">🔁 Toggle Camera</button>
+
+  <button onclick="toggleCamera()">🔁 Toggle Camera (Fullscreen)</button>
 
   <div id="video-wrapper">
     <video id="webcam" autoplay playsinline muted></video>
@@ -94,9 +92,7 @@
     }
 
     async function startCamera() {
-      if (currentStream) {
-        currentStream.getTracks().forEach(track => track.stop());
-      }
+      if (currentStream) currentStream.getTracks().forEach(track => track.stop());
 
       let constraints = {
         video: {
@@ -128,14 +124,24 @@
           log("⚠️ Back camera not available. Switching to front.");
           useBackCamera = false;
           startCamera();
-        } else {
-          alert("Camera not available.");
         }
       }
     }
 
-    function toggleCamera() {
+    async function toggleCamera() {
       useBackCamera = !useBackCamera;
+
+      // Request fullscreen
+      try {
+        if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+          log("🖥️ Fullscreen mode requested.");
+        }
+      } catch (err) {
+        log("⚠️ Fullscreen error: " + err.message);
+      }
+
+      // Try switching camera
       startCamera();
     }
 
