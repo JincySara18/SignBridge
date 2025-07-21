@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SignBridge - ASL (Fixed Camera)</title>
+  <title>SignBridge - ASL (Hardcoded Back Camera)</title>
   <style>
-    /* Your original styles + log box styling */
     #logBox {
       background: #fff;
       color: #000;
@@ -38,11 +37,9 @@
       </button>
     </div>
 
-    <!-- 📋 In-page log output -->
     <pre id="logBox">[LOGS]\n</pre>
   </div>
 
-  <!-- MediaPipe & camera scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
@@ -64,6 +61,8 @@
     let currentStream = null;
     let currentPrediction = "No hand detected";
     let camera = null;
+
+    const camera3Id = "57A0F5B9516D4E839E489C5E98333BF920481609"; // your Camera 3 deviceId
 
     const hands = new Hands({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
@@ -117,11 +116,11 @@
         await navigator.mediaDevices.getUserMedia({ video: true });
         mobileLog("✅ Camera permission granted");
       } catch (e) {
-        mobileLog("❌ Camera permission denied or not granted");
+        mobileLog("❌ Camera permission denied");
       }
 
       const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(d => d.kind === 'videoinput');
+      const videoDevices = devices.filter(device => device.kind === 'videoinput');
       videoDevices.forEach((device, i) => {
         mobileLog(`🎥 Camera ${i}: ${device.label} (${device.deviceId})`);
       });
@@ -131,22 +130,21 @@
     async function startCamera() {
       const videoDevices = await getAvailableCameras();
       if (videoDevices.length === 0) {
-        mobileLog("🚫 No video devices found");
         alert("No camera found");
         return;
       }
 
-      // 🔧 Pick LAST back camera (most likely the real rear one)
-      const backCameras = videoDevices.filter(device =>
-        device.label.toLowerCase().includes("back") || device.label.toLowerCase().includes("environment"));
-      const frontCamera = videoDevices.find(device =>
-        device.label.toLowerCase().includes("front") || device.label.toLowerCase().includes("user"));
+      const selectedDevice = useBackCamera
+        ? videoDevices.find(device => device.deviceId.includes(camera3Id))
+        : videoDevices.find(device => device.label.toLowerCase().includes("front")) || videoDevices[0];
 
-      const selectedDevice = useBackCamera && backCameras.length > 0
-        ? backCameras[backCameras.length - 1]  // 🟢 Use last back-facing camera
-        : frontCamera || videoDevices[0];
+      if (!selectedDevice) {
+        mobileLog("❌ Desired camera not found");
+        alert("Selected camera not found");
+        return;
+      }
 
-      mobileLog(`📸 Using: ${selectedDevice.label}`);
+      mobileLog(`📸 Using: ${selectedDevice.label} (${selectedDevice.deviceId})`);
 
       if (currentStream) {
         currentStream.getTracks().forEach(track => track.stop());
@@ -155,7 +153,7 @@
       try {
         const constraints = {
           video: {
-            deviceId: selectedDevice.deviceId,
+            deviceId: { exact: selectedDevice.deviceId },
             width: { ideal: 640 },
             height: { ideal: 480 }
           },
