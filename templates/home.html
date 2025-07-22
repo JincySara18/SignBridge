@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SignBridge - Home</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #011a17;
+      font-family: 'Arial', sans-serif;
+      color: #fff;
+    }
+
+    .container {
+      padding: 20px;
+      padding-bottom: 100px;
+    }
+
+    .logo {
+      text-align: center;
+      margin: 20px 0 30px;
+    }
+
+    .logo img {
+      width: 150px;
+    }
+
+    .card {
+      position: relative;
+      background-color: #01423e;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+      border: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .card.highlighted {
+      background-color: #83d8cd;
+      border: 3px solid #1ba69d;
+    }
+
+    .click-overlay {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background-color: #01423e;
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      display: none;
+    }
+
+    .card.highlighted .click-overlay {
+      display: inline-block;
+    }
+
+    .card h2 {
+      font-size: 24px;
+      color: #ffffff;
+      margin: 0 0 10px;
+    }
+
+    .card p {
+      font-size: 16px;
+      color: #cceae6;
+      margin-bottom: 16px;
+    }
+
+    .card button {
+      border: none;
+      background: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .card img {
+      width: 100%;
+      border-radius: 12px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #01423e;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 0;
+      border-top: 2px solid #1ba69d;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: #fff;
+      font-size: 12px;
+    }
+
+    .nav-item.active {
+      background-color: #83d8cd;
+      color: #000;
+      padding: 6px 12px;
+      border-radius: 12px;
+    }
+
+    .nav-item img {
+      display: block;
+      margin: 0 auto 4px;
+      width: 24px;
+      height: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="logo">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="SignBridge Logo" />
+    </div>
+
+    <div id="translateCard" class="card">
+      <span class="click-overlay">Click here</span>
+      <button onclick='window.location.href="{{ url_for("asl") }}"'>
+        <img src="{{ url_for('static', filename='translate.png') }}" alt="Translate Signs" />
+      </button>
+    </div>
+
+    <div id="transcribeCard" class="card">
+      <span class="click-overlay">Click here</span>
+      <button onclick='window.location.href="{{ url_for("audio") }}"'>
+        <img src="{{ url_for('static', filename='transcribe.png') }}" alt="Transcribe Words" />
+      </button>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item">
+      <img src="{{ url_for('static', filename='learn-icon.png') }}" alt="Learn" />
+      Learn
+    </div>
+    <div class="nav-item active">
+      <img src="{{ url_for('static', filename='home-icon.png') }}" alt="Home" />
+      Home
+    </div>
+    <div class="nav-item">
+      <img src="{{ url_for('static', filename='accessibility-icon.png') }}" alt="Accessibility" />
+      Accessibility
+    </div>
+  </div>
+
+  <script>
+    const role = "{{ role }}";
+
+    if (role === "deaf") {
+      document.getElementById("translateCard").classList.add("highlighted");
+    } else if (role === "hearing") {
+      document.getElementById("transcribeCard").classList.add("highlighted");
+    }
+  </script>
+</body>
+</html>

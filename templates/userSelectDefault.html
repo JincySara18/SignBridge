@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Type Selection</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #011a17;
+      font-family: 'Arial', sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h2 {
+      margin-bottom: 40px;
+      font-size: 24px;
+    }
+
+    .option-button {
+      width: 280px;
+      padding: 24px;
+      margin: 12px 0;
+      border: 3px solid #1ba69d;
+      border-radius: 20px;
+      background-color: transparent;
+      color: #1ba69d;
+      font-size: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .option-button.selected {
+      background-color: #83d8cd;
+      color: #000;
+    }
+
+    .go-button {
+      margin-top: 40px;
+      width: 280px;
+      padding: 18px;
+      border: none;
+      border-radius: 16px;
+      background-color: #1ba69d;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #89d8d3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: 0.3s ease;
+    }
+
+    .go-button:hover {
+      background-color: #17a398;
+    }
+
+    .arrow {
+      font-size: 22px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Tell us who you are</h2>
+
+  <button class="option-button" onclick="selectRole(this)">Deaf/Hard of Hearing</button>
+  <button class="option-button" onclick="selectRole(this)">Hearing Person</button>
+
+  <button class="go-button" onclick="goToNextPage()">
+    Let's Go <span class="arrow">→</span>
+  </button>
+
+  <script>
+    let selectedRole = "";
+
+    function selectRole(btn) {
+      document.querySelectorAll('.option-button').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+
+      const label = btn.innerText.toLowerCase();
+      selectedRole = label.includes("deaf") ? "deaf" : "hearing";
+    }
+
+    function goToNextPage() {
+      if (!selectedRole) {
+        alert("Please select an option.");
+        return;
+      }
+
+      // Navigate to home page via Flask route
+      window.location.href = `/home?role=${selectedRole}`;
+    }
+  </script>
+
+</body>
+</html>
