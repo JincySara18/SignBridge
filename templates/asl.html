@@ -20,7 +20,7 @@
 
     .container {
       padding: 16px;
-      padding-bottom: 80px;
+      padding-bottom: 100px; /* space for nav */
     }
 
     .back-btn {
@@ -96,42 +96,61 @@
       height: 40px;
     }
 
-    nav.bottom-nav {
+    /* BOTTOM NAV */
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background-color: #085952;
+      height: 80px;
       position: fixed;
       bottom: 0;
       left: 0;
-      width: 100%;
-      background-color: #056d94;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 10px 0;
-      border-top: 2px solid #004d47;
-      z-index: 1000;
+      right: 0;
     }
 
-    nav.bottom-nav .nav-item {
-      padding: 8px;
-      border-radius: 12px;
+    .nav-item {
+      width: 33.33%;
       display: flex;
       justify-content: center;
       align-items: center;
-      transition: background-color 0.3s;
+      text-decoration: none;
+      color: white;
     }
 
-    nav.bottom-nav .nav-item img {
+    .nav-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 48px;
+      width: 60px;
+      border-radius: 12px;
+      transition: 0.3s;
+    }
+
+    .icon {
       width: 28px;
       height: 28px;
-      transition: filter 0.3s;
+      background-size: contain;
+      background-repeat: no-repeat;
+      margin-bottom: 4px;
     }
 
-    nav.bottom-nav .nav-item.active {
-      background-color: #b3f1f1;
-      border: 2px solid black;
+    .learn-icon {
+      background-image: url('{{ url_for("static", filename="guide.svg") }}');
     }
 
-    nav.bottom-nav .nav-item.active img {
-      filter: brightness(0) saturate(100%);
+    .home-icon {
+      background-image: url('{{ url_for("static", filename="homeblkk.svg") }}');
+    }
+
+    .accessibility-icon {
+      background-image: url('{{ url_for("static", filename="accessbilityblk.svg") }}');
+    }
+
+    .nav-item.active .nav-content {
+      background-color: #a3e6dd;
+      color: black;
     }
   </style>
 </head>
@@ -153,17 +172,26 @@
     </div>
   </div>
 
-  <nav class="bottom-nav">
+  <div class="bottom-nav">
     <a href="/guide" class="nav-item">
-      <img src="{{ url_for('static', filename='Settings.svg') }}" alt="Settings Icon" />
+      <div class="nav-content">
+        <div class="icon learn-icon"></div>
+        <span>Learn</span>
+      </div>
     </a>
-    <a href="/" class="nav-item active">
-      <img src="{{ url_for('static', filename='home.svg') }}" alt="Home Icon" />
+    <a href="/userSelectDefault" class="nav-item active">
+      <div class="nav-content">
+        <div class="icon home-icon"></div>
+        <span>Home</span>
+      </div>
     </a>
     <a href="/accessibility" class="nav-item">
-      <img src="{{ url_for('static', filename='accessibilty.svg') }}" alt="Accessibility Icon" />
+      <div class="nav-content">
+        <div class="icon accessibility-icon"></div>
+        <span>Accessibility</span>
+      </div>
     </a>
-  </nav>
+  </div>
 
   <!-- MediaPipe + Webcam -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>

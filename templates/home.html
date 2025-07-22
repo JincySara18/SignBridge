@@ -83,37 +83,61 @@
       border-radius: 12px;
     }
 
+     /* BOTTOM NAV */
     .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background-color: #085952;
+      height: 80px;
       position: fixed;
       bottom: 0;
       left: 0;
-      width: 100%;
-      background-color: #01423e;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 10px 0;
-      border-top: 2px solid #1ba69d;
+      right: 0;
     }
 
     .nav-item {
-      text-align: center;
-      color: #fff;
-      font-size: 12px;
+      width: 33.33%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+      color: white;
     }
 
-    .nav-item.active {
-      background-color: #83d8cd;
-      color: #000;
-      padding: 6px 12px;
+    .nav-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 48px;
+      width: 60px;
       border-radius: 12px;
+      transition: 0.3s;
     }
 
-    .nav-item img {
-      display: block;
-      margin: 0 auto 4px;
-      width: 24px;
-      height: 24px;
+    .icon {
+      width: 28px;
+      height: 28px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      margin-bottom: 4px;
+    }
+
+    .learn-icon {
+      background-image: url('{{ url_for("static", filename="guide.svg") }}');
+    }
+
+    .home-icon {
+      background-image: url('{{ url_for("static", filename="homeblkk.svg") }}');
+    }
+
+    .accessibility-icon {
+      background-image: url('{{ url_for("static", filename="accessbilityblk.svg") }}');
+    }
+
+    .nav-item.active .nav-content {
+      background-color: #a3e6dd;
+      color: black;
     }
   </style>
 </head>
@@ -140,20 +164,25 @@
   </div>
 
   <div class="bottom-nav">
-    <div class="nav-item">
-      <img src="{{ url_for('static', filename='learn-icon.png') }}" alt="Learn" />
-      Learn
-    </div>
-    <div class="nav-item active">
-      <img src="{{ url_for('static', filename='home-icon.png') }}" alt="Home" />
-      Home
-    </div>
-    <div class="nav-item">
-      <img src="{{ url_for('static', filename='accessibility-icon.png') }}" alt="Accessibility" />
-      Accessibility
-    </div>
+    <a href="/guide" class="nav-item">
+      <div class="nav-content">
+        <div class="icon learn-icon"></div>
+        <span>Learn</span>
+      </div>
+    </a>
+    <a href="/userSelectDefault" class="nav-item active">
+      <div class="nav-content">
+        <div class="icon home-icon"></div>
+        <span>Home</span>
+      </div>
+    </a>
+    <a href="/accessibility" class="nav-item">
+      <div class="nav-content">
+        <div class="icon accessibility-icon"></div>
+        <span>Accessibility</span>
+      </div>
+    </a>
   </div>
-
   <script>
     const role = "{{ role }}";
 

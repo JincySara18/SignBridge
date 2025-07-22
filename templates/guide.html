@@ -50,39 +50,61 @@
       display: block;
     }
 
-    .navbar {
+     /* BOTTOM NAV */
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background-color: #085952;
+      height: 80px;
       position: fixed;
       bottom: 0;
       left: 0;
-      width: 100%;
-      background-color: #013832;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 8px 0;
-      border-top: 1px solid #004d44;
+      right: 0;
     }
 
-    .nav-button {
-      flex: 1;
+    .nav-item {
+      width: 33.33%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+      color: white;
+    }
+
+    .nav-content {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-size: 12px;
+      height: 48px;
+      width: 60px;
+      border-radius: 12px;
+      transition: 0.3s;
     }
 
-    .nav-button img {
+    .icon {
       width: 28px;
       height: 28px;
+      background-size: contain;
+      background-repeat: no-repeat;
       margin-bottom: 4px;
     }
 
-    .nav-button.active {
-      background-color: #00a393;
-      border-radius: 10px;
-      padding: 6px;
+    .learn-icon {
+      background-image: url('{{ url_for("static", filename="guide.svg") }}');
+    }
+
+    .home-icon {
+      background-image: url('{{ url_for("static", filename="homeblkk.svg") }}');
+    }
+
+    .accessibility-icon {
+      background-image: url('{{ url_for("static", filename="accessbilityblk.svg") }}');
+    }
+
+    .nav-item.active .nav-content {
+      background-color: #a3e6dd;
+      color: black;
     }
   </style>
 </head>
@@ -118,19 +140,26 @@
     </div>
   </div>
 
-  <div class="navbar">
-    <div class="nav-button active" onclick="location.href='/guide'">
-      <img src="{{ url_for('static', filename='accessibility.svg') }}" alt="Learn" />
-      <span>Learn</span>
-    </div>
-    <div class="nav-button" onclick="location.href='/userselect'">
-      <img src="{{ url_for('static', filename='home.svg') }}" alt="Home" />
-      <span>Home</span>
-    </div>
-    <div class="nav-button" onclick="location.href='/accessibility'">
-      <img src="{{ url_for('static', filename='accessibility.svg') }}" alt="Accessibility" />
-      <span>Accessibility</span>
-    </div>
+
+  <div class="bottom-nav">
+    <a href="/guide" class="nav-item active">
+      <div class="nav-content">
+        <div class="icon learn-icon"></div>
+        <span>Learn</span>
+      </div>
+    </a>
+    <a href="/userSelectDefault" class="nav-item">
+      <div class="nav-content">
+        <div class="icon home-icon"></div>
+        <span>Home</span>
+      </div>
+    </a>
+    <a href="/accessibility" class="nav-item">
+      <div class="nav-content">
+        <div class="icon accessibility-icon"></div>
+        <span>Accessibility</span>
+      </div>
+    </a>
   </div>
 
 </body>
