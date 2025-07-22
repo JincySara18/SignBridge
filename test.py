@@ -54,6 +54,10 @@ def user_select():
 def guide():
     return render_template("guide.html")
 
+@app.route("/userSelectDefault")
+def userselectDefault():
+    return render_template("userSelectDefault.html")
+
 @app.route("/asl")
 def asl():
     return render_template("asl.html")
@@ -65,6 +69,12 @@ def audio():
 @app.route("/accessibility")
 def accessibility():
     return render_template("accessibility.html")
+
+@app.route("/home")
+def home():
+    role = request.args.get("role")
+    return render_template("home.html", role=role)
+
 
 # === LANDMARK-BASED PREDICTION ===
 @app.route("/predict", methods=["POST"])
